@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caça CORS</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Link para o arquivo CSS externo -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="p-6">
+<div id="mainContainer" class="max-w-6xl mx-auto p-8 rounded-xl shadow-lg">
+    <div class="flex justify-between items-center mb-8">
+        <h1 id="mainTitle" class="text-3xl font-bold text-gray-800">Caça CORS - Requisições HTTP</h1>
+        <div class="flex gap-4">
+            <button id="settingsGear" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-md">
+                UrlsBase & Token
+            </button>
+            <button id="loadTestToggleBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-md">
+                Carga
+            </button>
+            <div class="relative">
+                <button id="themeToggle" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-md">
+                    Tema
+                </button>
+                <div id="themeDropdown" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 z-20">
+                    <button id="lightThemeButton" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Claro</button>
+                    <button id="darkThemeButton" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Escuro</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 class="text-2xl font-semibold mb-4 text-indigo-700">Configurações Globais</h2>
+            <div class="flex flex-col gap-4 mb-4">
+                <div>
+                    <label for="modalBaseUrl" class="block text-sm font-medium text-gray-700 mb-1">Base URL:</label>
+                    <input type="text" id="modalBaseUrl" placeholder="Ex: http://localhost:8080" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                </div>
+                <div>
+                    <label for="modalAuthToken" class="block text-sm font-medium text-gray-700 mb-1">Token:</label>
+                    <input type="text" id="modalAuthToken" placeholder="Seu token JWT" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                </div>
+            </div>
+            <button id="clearUrlHistoryButton" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-md mb-4">Limpar Histórico de URLs</button>
+            <button id="saveSettings" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition-colors shadow-md">Salvar</button>
+        </div>
+    </div>
+
+    <!-- Conteúdo da Simulação de Requisições HTTP (Inicialmente visível) -->
+    <div id="httpRequestSimulatorContent">
+        <div class="flex justify-center mb-8 bg-gray-100 p-2 rounded-lg shadow-sm">
+            <div class="relative flex-1">
+                <button id="postTab" class="tab-button py-2 px-4 rounded-lg">POST</button>
+                <div id="postTooltip" class="hidden tooltip">
+                    Método para enviar dados a um recurso específico, geralmente resultando em uma mudança de estado ou a criação de um novo recurso.
+                </div>
+            </div>
+            <div class="relative flex-1">
+                <button id="getTab" class="tab-button py-2 px-4 rounded-lg">GET</button>
+                <div id="getTooltip" class="hidden tooltip">
+                    Método para solicitar dados de um recurso especificado. Requisições GET devem apenas receber dados.
+                </div>
+            </div>
+            <div class="relative flex-1">
+                <button id="putTab" class="tab-button py-2 px-4 rounded-lg">PUT</button>
+                <div id="putTooltip" class="hidden tooltip">
+                    Método para substituir todas as representações atuais do recurso de destino pelos dados da requisição.
+                </div>
+            </div>
+            <div class="relative flex-1">
+                <button id="patchTab" class="tab-button py-2 px-4 rounded-lg">PATCH</button>
+                <div id="patchTooltip" class="hidden tooltip">
+                    Método para aplicar modificações parciais a um recurso.
+                </div>
+            </div>
+            <div class="relative flex-1">
+                <button id="deleteTab" class="tab-button py-2 px-4 rounded-lg">DELETE</button>
+                <div id="deleteTooltip" class="hidden tooltip">
+                    Método para deletar o recurso especificado.
+                </div>
+            </div>
+            <div class="relative flex-1">
+                <button id="headTab" class="tab-button py-2 px-4 rounded-lg">HEAD</button>
+                <div id="headTooltip" class="hidden tooltip">
+                    Método idêntico ao GET, mas sem o corpo da resposta. Útil para obter metadados.
+                </div>
+            </div>
+            <div class="relative flex-1">
+                <button id="optionsTab" class="tab-button py-2 px-4 rounded-lg">OPTIONS</button>
+                <div id="optionsTooltip" class="hidden tooltip">
+                    Método para descrever as opções de comunicação para o recurso de destino.
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <div id="requestColumn" class="flex-1">
+                <h2 id="requestColumnHeading" class="text-2xl font-semibold mb-4 text-gray-800 text-center">Requisição</h2>
+                <!-- POST Section -->
+                <div id="postSection" class="method-section active">
+                    <div class="mb-4">
+                        <label for="postUrl" class="block text-sm font-medium text-gray-700 mb-1">Endpoint URL:</label>
+                        <input type="text" id="postUrl" placeholder="/api/users" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" list="postUrlHistory" required>
+                        <datalist id="postUrlHistory"></datalist>
+                    </div>
+
+                    <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <input type="checkbox" id="postHeadersCheckbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="postHeadersCheckbox" class="ml-2 block text-sm font-medium text-gray-700">Adicionar Headers</label>
+                        </div>
+                        <div id="postHeadersContainer" class="hidden pl-6 border-l-2 border-indigo-200">
+                            <!-- Header inputs will be dynamically added here by JS -->
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="postBody" class="block text-sm font-medium text-gray-700 mb-1">Body (JSON):</label>
+                        <textarea id="postBody" rows="10" placeholder='{"nome": "João", "idade": 30}' class="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm font-mono"></textarea>
+                    </div>
+                    <button id="sendPost" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md">Enviar</button>
+                </div>
+
+                <!-- GET Section -->
+                <div id="getSection" class="method-section hidden">
+                    <div class="mb-4">
+                        <label for="getUrl" class="block text-sm font-medium text-gray-700 mb-1">Endpoint URL:</label>
+                        <input type="text" id="getUrl" placeholder="/api/products/123" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" list="getUrlHistory" required>
+                        <datalist id="getUrlHistory"></datalist>
+                    </div>
+                    <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <input type="checkbox" id="getHeadersCheckbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="getHeadersCheckbox" class="ml-2 block text-sm font-medium text-gray-700">Adicionar Headers</label>
+                        </div>
+                        <div id="getHeadersContainer" class="hidden pl-6 border-l-2 border-indigo-200">
+                            <!-- Header inputs will be dynamically added here by JS -->
+                        </div>
+                    </div>
+                    <button id="sendGet" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md">Enviar</button>
+                </div>
+
+                <!-- PUT Section -->
+                <div id="putSection" class="method-section hidden">
+                    <div class="mb-4">
+                        <label for="putUrl" class="block text-sm font-medium text-gray-700 mb-1">Endpoint URL:</label>
+                        <input type="text" id="putUrl" placeholder="/api/users/1" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" list="putUrlHistory" required>
+                        <datalist id="putUrlHistory"></datalist>
+                    </div>
+                    <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <input type="checkbox" id="putHeadersCheckbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="putHeadersCheckbox" class="ml-2 block text-sm font-medium text-gray-700">Adicionar Headers</label>
+                        </div>
+                        <div id="putHeadersContainer" class="hidden pl-6 border-l-2 border-indigo-200">
+                            <!-- Header inputs will be dynamically added here by JS -->
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="putBody" class="block text-sm font-medium text-gray-700 mb-1">Body (JSON):</label>
+                        <textarea id="putBody" rows="10" placeholder='{"nome": "João Silva", "idade": 31}' class="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm font-mono"></textarea>
+                    </div>
+                    <button id="sendPut" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md">Enviar</button>
+                </div>
+
+                <!-- PATCH Section -->
+                <div id="patchSection" class="method-section hidden">
+                    <div class="mb-4">
+                        <label for="patchUrl" class="block text-sm font-medium text-gray-700 mb-1">Endpoint URL:</label>
+                        <input type="text" id="patchUrl" placeholder="/api/users/1" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" list="patchUrlHistory" required>
+                        <datalist id="patchUrlHistory"></datalist>
+                    </div>
+                    <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <input type="checkbox" id="patchHeadersCheckbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="patchHeadersCheckbox" class="ml-2 block text-sm font-medium text-gray-700">Adicionar Headers</label>
+                        </div>
+                        <div id="patchHeadersContainer" class="hidden pl-6 border-l-2 border-indigo-200">
+                            <!-- Header inputs will be dynamically added here by JS -->
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label for="patchBody" class="block text-sm font-medium text-gray-700 mb-1">Body (JSON):</label>
+                        <textarea id="patchBody" rows="10" placeholder='{"idade": 32}' class="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm font-mono"></textarea>
+                    </div>
+                    <button id="sendPatch" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md">Enviar</button>
+                </div>
+
+                <!-- DELETE Section -->
+                <div id="deleteSection" class="method-section hidden">
+                    <div class="mb-4">
+                        <label for="deleteUrl" class="block text-sm font-medium text-gray-700 mb-1">Endpoint URL:</label>
+                        <input type="text" id="deleteUrl" placeholder="/api/users/1" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" list="deleteUrlHistory" required>
+                        <datalist id="deleteUrlHistory"></datalist>
+                    </div>
+                    <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <input type="checkbox" id="deleteHeadersCheckbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="deleteHeadersCheckbox" class="ml-2 block text-sm font-medium text-gray-700">Adicionar Headers</label>
+                        </div>
+                        <div id="deleteHeadersContainer" class="hidden pl-6 border-l-2 border-indigo-200">
+                            <!-- Header inputs will be dynamically added here by JS -->
+                        </div>
+                    </div>
+                    <button id="sendDelete" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md">Enviar</button>
+                </div>
+
+                <!-- HEAD Section -->
+                <div id="headSection" class="method-section hidden">
+                    <div class="mb-4">
+                        <label for="headUrl" class="block text-sm font-medium text-gray-700 mb-1">Endpoint URL:</label>
+                        <input type="text" id="headUrl" placeholder="/api/posts/metadata" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" list="headUrlHistory" required>
+                        <datalist id="headUrlHistory"></datalist>
+                    </div>
+                    <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <input type="checkbox" id="headHeadersCheckbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="headHeadersCheckbox" class="ml-2 block text-sm font-medium text-gray-700">Adicionar Headers</label>
+                        </div>
+                        <div id="headHeadersContainer" class="hidden pl-6 border-l-2 border-indigo-200">
+                            <!-- Header inputs will be dynamically added here by JS -->
+                        </div>
+                    </div>
+                    <button id="sendHead" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md">Enviar</button>
+                </div>
+
+                <!-- OPTIONS Section -->
+                <div id="optionsSection" class="method-section hidden">
+                    <div class="mb-4">
+                        <label for="optionsUrl" class="block text-sm font-medium text-gray-700 mb-1">Endpoint URL:</label>
+                        <input type="text" id="optionsUrl" placeholder="/api/users" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" list="optionsUrlHistory" required>
+                        <datalist id="optionsUrlHistory"></datalist>
+                    </div>
+                    <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <input type="checkbox" id="optionsHeadersCheckbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="optionsHeadersCheckbox" class="ml-2 block text-sm font-medium text-gray-700">Adicionar Headers</label>
+                        </div>
+                        <div id="optionsHeadersContainer" class="hidden pl-6 border-l-2 border-indigo-200">
+                            <!-- Header inputs will be dynamically added here by JS -->
+                        </div>
+                    </div>
+                    <button id="sendOptions" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md">Enviar</button>
+                </div>
+            </div>
+
+            <div id="responseColumn" class="flex-1 lg:pl-8 lg:border-l-2 lg:border-gray-200 lg:pt-0 pt-8 mt-8 lg:mt-0">
+                <h2 id="responseColumnHeading" class="text-2xl font-semibold mb-4 text-gray-800 text-center">Resposta</h2>
+
+                <div class="mb-4 flex items-center">
+                    <label class="text-sm font-medium text-gray-700 mr-2">Status:</label>
+                    <div id="statusCodeDisplay" class="p-3 text-lg font-bold rounded-md bg-gray-100 text-gray-800 text-center w-full">Aguardando...</div>
+                </div>
+
+                <div class="mb-4 flex flex-col sm:flex-row gap-4 w-full">
+                    <div class="flex-1 flex items-center relative">
+                        <label class="text-sm font-medium text-gray-700 mr-2">Tempo:</label>
+                        <div id="responseTimeDisplay" class="p-3 text-lg font-bold rounded-md bg-gray-100 text-gray-800 text-center w-full cursor-help">-- ms</div>
+                        <div id="responseTimeTooltip" class="hidden tooltip">
+                            <h3 class="font-semibold mb-2 text-gray-800">Detalhes do Tempo</h3>
+                            <div class="space-y-1">
+                                <p><strong>DNS Lookup:</strong> <span id="tooltipDnsLookup">-- ms</span></p>
+                                <p><strong>TCP Handshake:</strong> <span id="tooltipTcpHandshake">-- ms</span></p>
+                                <p><strong>SSL Handshake:</strong> <span id="tooltipSslHandshake">-- ms</span></p>
+                                <p><strong>Waiting (TTFB):</strong> <span id="tooltipTtfb">-- ms</span></p>
+                                <p><strong>Download:</strong> <span id="tooltipDownload">-- ms</span></p>
+                                <p><strong>Process (Estimado):</strong> <span id="tooltipProcess">-- ms</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-1 flex items-center relative">
+                        <label class="text-sm font-medium text-gray-700 mr-2">Tamanho:</label>
+                        <div id="responseSizeDisplay" class="p-3 text-lg font-bold rounded-md bg-gray-100 text-gray-800 text-center w-full cursor-help">-- KB</div>
+                        <div id="responseSizeTooltip" class="hidden tooltip">
+                            <h3 class="font-semibold mb-2 text-gray-800">Detalhes do Tamanho</h3>
+                            <div class="space-y-1">
+                                <p><strong>Headers:</strong> <span id="tooltipResponseHeadersSize">-- B</span></p>
+                                <p><strong>Body:</strong> <span id="tooltipResponseBodySize">-- B</span></p>
+                                <hr class="my-2 border-gray-200">
+                                <p><strong>Headers da Requisição:</strong> <span id="tooltipRequestHeadersSize">-- B</span></p>
+                                <p><strong>Body da Requisição:</strong> <span id="tooltipRequestBodySize">-- B</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4 flex justify-center bg-gray-100 p-1 rounded-lg shadow-sm">
+                    <button id="bodyTabButton" class="response-tab-button active-response-tab text-gray-700 hover:bg-indigo-100">Body</button>
+                    <button id="headersTabButton" class="response-tab-button text-gray-700 hover:bg-indigo-100">Headers</button>
+                </div>
+
+                <div id="responseBodyContainer" class="response-content-container">
+                    <pre id="responseBodyDisplay" class="w-full p-4 bg-gray-800 text-white rounded-md overflow-auto text-sm font-mono whitespace-pre-wrap break-all">Aguardando resposta...</pre>
+                </div>
+
+                <div id="responseHeadersContainer" class="response-content-container hidden">
+                    <pre id="responseHeadersDisplay" class="w-full p-4 bg-gray-800 text-white rounded-md overflow-auto text-sm font-mono whitespace-pre-wrap break-all">Aguardando cabeçalhos...</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nova div para a simulação de ataque DDOS (inicialmente oculta) -->
+    <div id="loadTestContainer" class="hidden flex flex-col gap-8">
+        <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">Simulação de Carga (Load Test)</h2>
+
+        <!-- Updated warning message styling and content -->
+        <div class="bg-gray-100 p-4 rounded-md shadow-sm text-center"> <!-- Changed bg-white to bg-gray-100 and added text-center -->
+            <p class="font-bold text-red-700">AVISO:</p>
+            <p class="text-red-700">Esta funcionalidade é para testes de carga em servidores sob seu controle e com permissão. O uso indevido para ataques DDoS é ilegal e antiético.</p>
+        </div>
+
+        <!-- Inputs para Teste de Carga - Lado a lado -->
+        <div class="flex flex-col lg:flex-row gap-4 mb-4">
+            <div class="flex-1">
+                <label for="intervalInput" class="block text-sm font-medium text-gray-700 mb-1">Intervalo (ms) entre requisições:</label>
+                <input type="number" id="intervalInput" value="100" min="10" class="w-full p-2 h-10 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"> <!-- p-2 h-10 removed text-lg -->
+            </div>
+            <div class="flex-1">
+                <label for="loadTestUrlInput" class="block text-sm font-medium text-gray-700 mb-1">Endpoint de Carga:</label>
+                <input type="text" id="loadTestUrlInput" placeholder="/api/health" class="w-full p-2 h-10 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm" required>
+            </div>
+            <div class="flex-1">
+                <label for="loadTestMethodSelect" class="block text-sm font-medium text-gray-700 mb-1">Método de Carga:</label>
+                <select id="loadTestMethodSelect" class="w-full p-2 h-10 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"> <!-- p-2 h-10 -->
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="PATCH">PATCH</option>
+                    <option value="DELETE">DELETE</option>
+                    <option value="HEAD">HEAD</option>
+                    <option value="OPTIONS">OPTIONS</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="loadTestBodyContainer" class="mb-6 hidden">
+            <label for="loadTestBodyInput" class="block text-sm font-medium text-gray-700 mb-1">Body (JSON para POST/PUT/PATCH):</label>
+            <textarea id="loadTestBodyInput" rows="5" placeholder='{"key": "value"}' class="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm font-mono"></textarea>
+        </div>
+
+
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+            <button id="startLoadTestButton" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md text-lg">
+                Iniciar Simulação
+            </button>
+            <button id="stopLoadTestButton" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md text-lg" disabled>
+                Parar Simulação
+            </button>
+            <button id="resetLoadTestButton" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md text-lg">
+                Resetar
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <div class="bg-gray-100 p-6 rounded-lg shadow-sm text-center">
+                <p class="text-gray-700 text-sm font-medium">Total Enviado:</p>
+                <p id="totalSentDisplay" class="text-3xl font-bold text-gray-800 mt-1">0</p>
+            </div>
+            <div class="bg-gray-100 p-6 rounded-lg shadow-sm text-center">
+                <p class="text-gray-700 text-sm font-medium">Sucesso:</p>
+                <p id="successCountDisplay" class="text-3xl font-bold text-green-600 mt-1">0</p>
+            </div>
+            <div class="bg-gray-100 p-6 rounded-lg shadow-sm text-center">
+                <p class="text-gray-700 text-sm font-medium">Falha:</p>
+                <p id="failureCountDisplay" class="text-3xl font-bold text-red-600 mt-1">0</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="script.js" defer></script>
+</body>
+</html>

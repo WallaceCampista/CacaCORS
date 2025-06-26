@@ -1,0 +1,223 @@
+/* Define a fonte Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f0f2f5; /* Cor de fundo suave padrão */
+}
+/* Dark mode base styles, applied via JavaScript */
+body.dark-mode {
+    /* background-color definido por JS para o body */
+}
+/* O container principal e outros elementos com classes bg-* fixas */
+.main-container.dark-mode {
+    /* background-color definido por JS para o mainContainer */
+    color: #e2e8f0; /* Cor de texto padrão para o container principal no dark mode */
+}
+
+/* Ajuste das cores de fundo para os status codes */
+.bg-status-success { background-color: #d1fae5; } /* Verde claro */
+.text-status-success { color: #065f46; } /* Verde escuro */
+.bg-status-redirect { background-color: #fef3c7; } /* Amarelo claro */
+.text-status-redirect { color: #b45309; } /* Amarelo escuro */
+.bg-status-client-error { background-color: #fee2e2; } /* Vermelho claro (para 4xx) */
+.text-status-client-error { color: #991b1b; } /* Vermelho escuro (para 4xx) */
+.bg-status-server-error { background-color: #fee2e2; } /* Vermelho claro (para 5xx) */
+.text-status-server-error { color: #991b1b; } /* Vermelho escuro (para 5xx) */
+.bg-status-info { background-color: #dbeafe; } /* Azul claro */
+.text-status-info { color: #1e40af; } /* Azul escuro */
+.bg-status-default { background-color: #e5e7eb; } /* Cinza claro */
+.text-status-default { color: #374151; } /* Cinza escuro */
+
+/* Regras de Dark Mode (aplicadas quando a classe 'dark-mode' está no body) */
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode .text-gray-800 { color: #e2e8f0 !important; } /* text-gray-200 */
+.dark-mode label { color: #cbd5e0 !important; } /* text-gray-300 */
+.dark-mode .bg-gray-100 { background-color: #4a5568 !important; } /* gray-700 */
+.dark-mode .bg-gray-50 { background-color: #4a5568 !important; } /* gray-700 */
+.dark-mode .border-gray-300 { border-color: #4a5568 !important; } /* gray-600 */
+.dark-mode input[type="text"],
+.dark-mode textarea,
+.dark-mode select {
+    background-color: #4a5568 !important; /* gray-700 */
+    color: #e2e8f0 !important; /* text-gray-200 */
+    border-color: #4a5568 !important; /* gray-600 */
+}
+.dark-mode pre {
+    background-color: #1a202c !important; /* gray-900 para pre */
+    color: #e2e8f0 !important; /* text-gray-200 */
+}
+.dark-mode .modal-content { background-color: #2d3748 !important; } /* Fundo do modal */
+.dark-mode .text-indigo-700 { color: #9fa8da !important; } /* indigo-300 */
+.dark-mode .tooltip {
+    background-color: #2d3748 !important; /* gray-800 */
+    border-color: #4a5568 !important; /* gray-700 */
+    color: #e2e8f0 !important; /* text-gray-200 */
+}
+.dark-mode .border-gray-200 { border-color: #4a5568 !important; } /* Border vertical principal e de tooltips */
+.dark-mode .border-indigo-200 { border-color: #312e81 !important; } /* Border lateral de headers */
+.dark-mode hr.border-gray-200 { border-color: #4a5568 !important; } /* Linha horizontal no tooltip de tamanho */
+/* Updated dark mode for warning text to match red */
+.dark-mode .alert-warning p {
+    color: #fca5a5 !important; /* red-300 for dark mode */
+}
+.dark-mode .bg-gray-800 { background-color: #2d3748 !important; } /* Gray-800 para o body do dark mode */
+.dark-mode .text-gray-700 { color: #cbd5e0 !important; } /* text-gray-300 */
+
+/* Tema escuro: Cor do texto das opções do tema no dropdown */
+.dark-mode #themeDropdown button {
+    color: #000000 !important; /* Preto */
+}
+
+/* Base styles for all tab buttons */
+.tab-button {
+    background-color: transparent;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    width: 100%; /* Garante que o botão preencha o flex-item pai */
+
+}
+
+/* Cores de texto padrão para botões de aba NÃO ATIVOS (light mode) */
+.tab-button { color: #1a202c; /* black */ } /* Cor padrão para texto de botão em light mode */
+
+/* Cores de texto padrão para botões de aba NÃO ATIVOS (dark mode) */
+.dark-mode .tab-button { color: white; } /* Cor padrão para texto de botão em dark mode */
+
+/* Cores ativas para cada método (fundo sólido, texto branco) */
+.tab-button.active-post { background-color: #f97316; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); } /* Orange 500 */
+.tab-button.active-get { background-color: #22c55e; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); } /* Green 500 */
+.tab-button.active-put { background-color: #3b82f6; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); } /* Blue 500 */
+.tab-button.active-delete { background-color: #ef4444; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); } /* Red 500 */
+.tab-button.active-patch { background-color: #a855f7; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); } /* Purple 500 */
+.tab-button.active-head { background-color: #10b981; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); } /* Emerald 500 */
+.tab-button.active-options { background-color: #ec4899; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); } /* Rose 500 */
+
+
+/* Efeitos de hover para botões de aba NÃO ATIVOS (versão transparente da sua própria cor) */
+#postTab:hover:not(.active-post) { background-color: rgba(249, 115, 22, 0.1); } /* Laranja com 10% de opacidade */
+#getTab:hover:not(.active-get) { background-color: rgba(34, 197, 94, 0.1); } /* Verde com 10% de opacidade */
+#putTab:hover:not(.active-put) { background-color: rgba(59, 130, 246, 0.1); } /* Azul com 10% de opacidade */
+#deleteTab:hover:not(.active-delete) { background-color: rgba(239, 68, 68, 0.1); } /* Vermelho com 10% de opacidade */
+#patchTab:hover:not(.active-patch) { background-color: rgba(168, 85, 247, 0.1); } /* Roxo com 10% de opacidade */
+#headTab:hover:not(.active-head) { background-color: rgba(16, 185, 129, 0.1); } /* Esmeralda com 10% de opacidade */
+#optionsTab:hover:not(.active-options) { background-color: rgba(236, 72, 153, 0.1); } /* Rosa com 10% de opacidade */
+
+
+/* Efeitos de hover para botões de aba ATIVOS (versão ligeiramente mais opaca da sua própria cor) */
+.tab-button.active-post:hover { background-color: rgba(249, 115, 22, 0.9); } /* Laranja com 90% de opacidade */
+.tab-button.active-get:hover { background-color: rgba(34, 197, 94, 0.9); } /* Verde com 90% de opacidade */
+.tab-button.active-put:hover { background-color: rgba(59, 130, 246, 0.9); } /* Azul com 90% de opacidade */
+.tab-button.active-patch:hover { background-color: rgba(168, 85, 247, 0.9); } /* Roxo com 90% de opacidade */
+.tab-button.active-delete:hover { background-color: rgba(239, 68, 68, 0.9); } /* Vermelho com 90% de opacidade */
+.tab-button.active-head:hover { background-color: rgba(16, 185, 129, 0.9); } /* Esmeralda com 90% de opacidade */
+.tab-button.active-options:hover { background-color: rgba(236, 72, 153, 0.9); } /* Rosa com 90% de opacidade */
+
+
+/* Efeitos de hover para botões de aba não ativos no modo escuro (versão transparente da sua própria cor, um pouco mais escura) */
+.dark-mode #postTab:hover:not(.active-post) { background-color: rgba(249, 115, 22, 0.2); } /* Laranja com 20% de opacidade */
+.dark-mode #getTab:hover:not(.active-get) { background-color: rgba(34, 197, 94, 0.2); } /* Verde com 20% de opacidade */
+.dark-mode #putTab:hover:not(.active-put) { background-color: rgba(59, 130, 246, 0.2); } /* Azul com 20% de opacidade */
+.dark-mode #deleteTab:hover:not(.active-delete) { background-color: rgba(239, 68, 68, 0.2); } /* Vermelho com 20% de opacidade */
+.dark-mode #patchTab:hover:not(.active-patch) { background-color: rgba(168, 85, 247, 0.2); } /* Roxo com 20% de opacidade */
+.dark-mode #headTab:hover:not(.active-head) { background-color: rgba(16, 185, 129, 0.2); } /* Esmeralda com 20% de opacidade */
+.dark-mode #optionsTab:hover:not(.active-options) { background-color: rgba(236, 72, 153, 0.2); } /* Rosa com 20% de opacidade */
+
+.header-input-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+}
+.close-button {
+    color: #aaa;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+.close-button:hover,
+.close-button:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+/* Adicionado para a barra de rolagem no corpo da resposta */
+#responseBodyDisplay, #responseHeadersDisplay {
+    max-height: 430px; /* Define uma altura máxima para o corpo da resposta e headers */
+    overflow-y: auto; /* Adiciona uma barra de rolagem vertical quando o conteúdo excede a altura máxima */
+}
+
+/* Styles for response tabs */
+.response-tab-button {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+.response-tab-button.active-response-tab {
+    background-color: #4f46e5; /* Indigo 600 */
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.response-tab-button:hover:not(.active-response-tab) {
+    background-color: #e0e7ff; /* Indigo 100 */
+    color: #4f46e5;
+}
+/* Dark mode hover for response tabs */
+.dark-mode .response-tab-button:hover:not(.active-response-tab) {
+    background-color: #312e81; /* indigo-800 */
+    color: #e0e7ff; /* indigo-100 */
+}
+
+
+/* Tooltip de tempo e tamanho */
+.tooltip {
+    position: absolute;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0; /* gray-200 */
+    z-index: 100;
+    min-width: 200px;
+    top: calc(100% + 8px); /* 8px abaixo do elemento pai */
+    left: 0;
+    transform: translateX(0); /* Garante alinhamento à esquerda */
+    transition: opacity 0.3s ease-in-out; /* Transição para a opacidade */
+    opacity: 0; /* Começa invisível */
+    visibility: hidden; /* Esconde completamente */
+}
+.tooltip.visible {
+    opacity: 1;
+    visibility: visible;
+}
