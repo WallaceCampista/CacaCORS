@@ -888,11 +888,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (!hasPerfEntry) {
                     // Nenhuma entrada de performance
-                    statusText = '500';
+                    statusText = '500 Internal Server Error';
                     bodyText = 'O servidor está offline ou recusou a conexão (Connection Refused).';
                 } else if (transferSize === 0 && responseTime < 50) {
                     // Entrada criada mas sem tráfego
-                    statusText = '500';
+                    statusText = '500 Internal Server Error';
                     bodyText = 'O servidor está offline ou recusou a conexão (Connection Refused).';
                 } else {
                     // Houve tráfego: provavelmente CORS
