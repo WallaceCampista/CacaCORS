@@ -16,6 +16,7 @@
     - [AVISO](#aviso)
 - [Tecnologias Utilizadas](#tecnologias-utilizadas)
 - [Como Configurar e Executar](#como-configurar-e-executar)
+- [Arquitetura do Projeto](#arquitetura-do-projeto)
 - [Uso Configurações Globais](#uso-configurações-globais)
 - [Realizando Requisições HTTP](#realizando-requisicoes-http)
 - [Analisando a Resposta](#analisando-a-resposta)
