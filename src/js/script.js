@@ -734,7 +734,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Exibe um erro no painel de resposta.
-     * @param {string} method - O método HTTP.
+     * @param {string} method - O função HTTP.
      * @param {string} statusText - O texto a ser exibido no status (ex: 'Erro de CORS').
      * @param {string} bodyText - O texto a ser exibido no body (mensagem detalhada).
      * @param {string} bgColorClass - Classe CSS para a cor de fundo do status.
@@ -751,7 +751,7 @@ document.addEventListener('DOMContentLoaded', () => {
         responseTimeDisplay.textContent = responseTime !== null ? `${responseTime.toFixed(2)} ms` : '-- ms';
         responseSizeDisplay.textContent = '-- KB';
 
-        // Salva o erro na resposta para o método atual
+        // Salva o erro na resposta para a função atual
         methodResponses[method].statusCode = statusText;
         methodResponses[method].body = bodyText;
         methodResponses[method].time = responseTime;
@@ -763,7 +763,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Prepara e envia a requisição HTTP.
-     * @param {string} method - método HTTP (GET, POST, PUT, DELETE).
+     * @param {string} method - função HTTP (GET, POST, PUT, DELETE).
      * @param {string} urlInputId - ID do input da URL.
      * @param {string} headersCheckboxId - ID do checkbox de headers.
      * @param {string} headersContainerId - ID do contêiner de headers.
