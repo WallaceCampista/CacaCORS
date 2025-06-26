@@ -514,7 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
             statusCodeDisplay.textContent = statusCode;
             statusCodeDisplay.classList.add('bg-red-100', 'text-red-700');
         } else if (statusCode !== null) {
-            const statusText = statusCodeMessages[statusCode] || 'Unknown';
+            const statusText = statusCodeMessages[statusCode] || '';
             statusCodeDisplay.textContent = `${statusCode} ${statusText}`;
             if (statusCode >= 200 && statusCode < 300) {
                 statusCodeDisplay.classList.add('bg-status-success', 'text-status-success');
@@ -775,7 +775,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fullUrl = `${baseUrlInput.value}${endpoint}`;
 
         if (!endpoint) {
-            displayError(method, 'Erro: Endpoint Obrigatório!', 'Por favor, preencha o endpoint antes de enviar a requisição.', 'bg-red-100 text-red-700', null);
+            displayError(method, 'Endpoint Obrigatório!', 'Por favor, preencha o endpoint antes de enviar a requisição.', 'bg-red-100 text-red-700', null);
             return;
         }
 
