@@ -84,7 +84,7 @@ body.dark-mode {
 /* Cores de texto padrão para botões de aba NÃO ATIVOS (dark mode) */
 .dark-mode .tab-button { color: white; } /* Cor padrão para texto de botão em dark mode */
 
-/* Cores ativas para cada método (fundo sólido, texto branco) */
+/* Cores ativas para cada função (fundo sólido, texto branco) */
 .tab-button.active-post { background-color: #f97316; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); } /* Orange 500 */
 .tab-button.active-get { background-color: #22c55e; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); } /* Green 500 */
 .tab-button.active-put { background-color: #3b82f6; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); } /* Blue 500 */
