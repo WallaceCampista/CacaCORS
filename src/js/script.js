@@ -53,52 +53,227 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mapeamento de Tooltips para Botões
     const methodTooltips = {
-        postTab: { element: document.getElementById('postTooltip'), content: "Método para enviar dados a um recurso específico, geralmente resultando em uma mudança de estado ou a criação de um novo recurso." },
-        getTab: { element: document.getElementById('getTooltip'), content: "Método para solicitar dados de um recurso especificado. Requisições GET devem apenas receber dados." },
-        putTab: { element: document.getElementById('putTooltip'), content: "Método para substituir todas as representações atuais do recurso de destino pelos dados da requisição." },
-        patchTab: { element: document.getElementById('patchTooltip'), content: "Método para aplicar modificações parciais a um recurso." },
-        deleteTab: { element: document.getElementById('deleteTooltip'), content: "Método para deletar o recurso especificado." },
-        headTab: { element: document.getElementById('headTooltip'), content: "Método idêntico ao GET, mas sem o corpo da resposta. Útil para obter metadados." },
-        optionsTab: { element: document.getElementById('optionsTooltip'), content: "Método para descrever as opções de comunicação para o recurso de destino." }
+        postTab: {
+            element: document.getElementById('postTooltip'),
+            content: "Método para enviar dados a um recurso específico, geralmente resultando em uma mudança de estado ou a criação de um novo recurso."
+        },
+        getTab: {
+            element: document.getElementById('getTooltip'),
+            content: "Método para solicitar dados de um recurso especificado. Requisições GET devem apenas receber dados."
+        },
+        putTab: {
+            element: document.getElementById('putTooltip'),
+            content: "Método para substituir todas as representações atuais do recurso de destino pelos dados da requisição."
+        },
+        patchTab: {
+            element: document.getElementById('patchTooltip'),
+            content: "Método para aplicar modificações parciais a um recurso."
+        },
+        deleteTab: {
+            element: document.getElementById('deleteTooltip'),
+            content: "Método para deletar o recurso especificado."
+        },
+        headTab: {
+            element: document.getElementById('headTooltip'),
+            content: "Método idêntico ao GET, mas sem o corpo da resposta. Útil para obter metadados."
+        },
+        optionsTab: {
+            element: document.getElementById('optionsTooltip'),
+            content: "Método para descrever as opções de comunicação para o recurso de destino."
+        }
     };
     let tooltipTimeout; // Variável para armazenar o ID do timeout do tooltip
 
     // Objeto para armazenar as respostas por função.
     const methodResponses = {
-        POST: { statusCode: null, body: null, time: null, size: null, headers: null, detailedTiming: null, detailedSize: null },
-        GET: { statusCode: null, body: null, time: null, size: null, headers: null, detailedTiming: null, detailedSize: null },
-        PUT: { statusCode: null, body: null, time: null, size: null, headers: null, detailedTiming: null, detailedSize: null },
-        PATCH: { statusCode: null, body: null, time: null, size: null, headers: null, detailedTiming: null, detailedSize: null },
-        DELETE: { statusCode: null, body: null, time: null, size: null, headers: null, detailedTiming: null, detailedSize: null },
-        HEAD: { statusCode: null, body: null, time: null, size: null, headers: null, detailedTiming: null, detailedSize: null },
-        OPTIONS: { statusCode: null, body: null, time: null, size: null, headers: null, detailedTiming: null, detailedSize: null }
+        POST: {
+            statusCode: null,
+            body: null,
+            time: null,
+            size: null,
+            headers: null,
+            detailedTiming: null,
+            detailedSize: null
+        },
+        GET: {
+            statusCode: null,
+            body: null,
+            time: null,
+            size: null,
+            headers: null,
+            detailedTiming: null,
+            detailedSize: null
+        },
+        PUT: {
+            statusCode: null,
+            body: null,
+            time: null,
+            size: null,
+            headers: null,
+            detailedTiming: null,
+            detailedSize: null
+        },
+        PATCH: {
+            statusCode: null,
+            body: null,
+            time: null,
+            size: null,
+            headers: null,
+            detailedTiming: null,
+            detailedSize: null
+        },
+        DELETE: {
+            statusCode: null,
+            body: null,
+            time: null,
+            size: null,
+            headers: null,
+            detailedTiming: null,
+            detailedSize: null
+        },
+        HEAD: {
+            statusCode: null,
+            body: null,
+            time: null,
+            size: null,
+            headers: null,
+            detailedTiming: null,
+            detailedSize: null
+        },
+        OPTIONS: {
+            statusCode: null,
+            body: null,
+            time: null,
+            size: null,
+            headers: null,
+            detailedTiming: null,
+            detailedSize: null
+        }
     };
 
     // Variável para rastrear a função ativa.
     let activeMethod = 'POST'; // Inicia com POST como ativo.
 
     // Objeto para armazenar o histórico de URLs por função.
-    let urlHistories = JSON.parse(localStorage.getItem('urlHistories')) || { POST: [], GET: [], PUT: [], PATCH: [], DELETE: [], HEAD: [], OPTIONS: [] };
+    let urlHistories = JSON.parse(localStorage.getItem('urlHistories')) || {
+        POST: [],
+        GET: [],
+        PUT: [],
+        PATCH: [],
+        DELETE: [],
+        HEAD: [],
+        OPTIONS: []
+    };
 
     // Mapeamento para obter os IDs de input com base no função ativo.
     const methodInputMap = {
-        POST: { url: 'postUrl', headersCheckbox: 'postHeadersCheckbox', headersContainer: 'postHeadersContainer', body: 'postBody' },
-        GET: { url: 'getUrl', headersCheckbox: 'getHeadersCheckbox', headersContainer: 'getHeadersContainer', body: null },
-        PUT: { url: 'putUrl', headersCheckbox: 'putHeadersCheckbox', headersContainer: 'putHeadersContainer', body: 'putBody' },
-        PATCH: { url: 'patchUrl', headersCheckbox: 'patchHeadersCheckbox', headersContainer: 'patchHeadersContainer', body: 'patchBody' },
-        DELETE: { url: 'deleteUrl', headersCheckbox: 'deleteHeadersCheckbox', headersContainer: 'deleteHeadersContainer', body: null },
-        HEAD: { url: 'headUrl', headersCheckbox: 'headHeadersCheckbox', headersContainer: 'headHeadersContainer', body: null },
-        OPTIONS: { url: 'optionsUrl', headersCheckbox: 'optionsHeadersCheckbox', headersContainer: 'optionsHeadersContainer', body: null }
+        POST: {
+            url: 'postUrl',
+            headersCheckbox: 'postHeadersCheckbox',
+            headersContainer: 'postHeadersContainer',
+            body: 'postBody'
+        },
+        GET: {
+            url: 'getUrl',
+            headersCheckbox: 'getHeadersCheckbox',
+            headersContainer: 'getHeadersContainer',
+            body: null
+        },
+        PUT: {
+            url: 'putUrl',
+            headersCheckbox: 'putHeadersCheckbox',
+            headersContainer: 'putHeadersContainer',
+            body: 'putBody'
+        },
+        PATCH: {
+            url: 'patchUrl',
+            headersCheckbox: 'patchHeadersCheckbox',
+            headersContainer: 'patchHeadersContainer',
+            body: 'patchBody'
+        },
+        DELETE: {
+            url: 'deleteUrl',
+            headersCheckbox: 'deleteHeadersCheckbox',
+            headersContainer: 'deleteHeadersContainer',
+            body: null
+        },
+        HEAD: {
+            url: 'headUrl',
+            headersCheckbox: 'headHeadersCheckbox',
+            headersContainer: 'headHeadersContainer',
+            body: null
+        },
+        OPTIONS: {
+            url: 'optionsUrl',
+            headersCheckbox: 'optionsHeadersCheckbox',
+            headersContainer: 'optionsHeadersContainer',
+            body: null
+        }
     };
 
     // Mapeamento de códigos de status HTTP para mensagens
     const statusCodeMessages = {
-        100: 'Continue', 101: 'Switching Protocols', 102: 'Processing',
-        200: 'OK', 201: 'Created', 202: 'Accepted', 203: 'Non-Authoritative Information', 204: 'No Content', 205: 'Reset Content', 206: 'Partial Content', 207: 'Multi-Status', 208: 'Already Reported', 226: 'IM Used',
-        300: 'Multiple Choices', 301: 'Moved Permanently', 302: 'Found', 303: 'See Other', 304: 'Not Modified', 305: 'Use Proxy', 307: 'Temporary Redirect', 308: 'Permanent Redirect',
-        400: 'Bad Request', 401: 'Unauthorized', 402: 'Payment Required', 403: 'Forbidden', 404: 'Not Found', 405: 'Method Not Allowed', 406: 'Not Acceptable', 407: 'Proxy Authentication Required', 408: 'Request Timeout', 409: 'Conflict', 410: 'Gone', 411: 'Length Required', 412: 'Precondition Failed', 413: 'Payload Too Large', 414: 'URI Too Long', 415: 'Unsupported Media Type', 416: 'Range Not Satisfiable', 417: 'Expectation Failed', 418: 'I\'m a teapot', 421: 'Misdirected Request', 422: 'Unprocessable Entity', 423: 'Locked', 424: 'Failed Dependency', 425: 'Too Early', 426: 'Upgrade Required', 428: 'Precondition Required', 429: 'Too Many Requests',
-        431: 'Request Header Fields Too Large', 451: 'Unavailable For Legal Reasons',
-        500: 'Internal Server Error', 501: 'Not Implemented', 502: 'Bad Gateway', 503: 'Service Unavailable', 504: 'Gateway Timeout', 505: 'HTTP Version Not Supported', 506: 'Variant Also Negotiates', 507: 'Insufficient Storage', 508: 'Loop Detected', 510: 'Not Extended', 511: 'Network Authentication Required'
+        100: 'Continue',
+        101: 'Switching Protocols',
+        102: 'Processing',
+        200: 'OK',
+        201: 'Created',
+        202: 'Accepted',
+        203: 'Non-Authoritative Information',
+        204: 'No Content',
+        205: 'Reset Content',
+        206: 'Partial Content',
+        207: 'Multi-Status',
+        208: 'Already Reported',
+        226: 'IM Used',
+        300: 'Multiple Choices',
+        301: 'Moved Permanently',
+        302: 'Found',
+        303: 'See Other',
+        304: 'Not Modified',
+        305: 'Use Proxy',
+        307: 'Temporary Redirect',
+        308: 'Permanent Redirect',
+        400: 'Bad Request',
+        401: 'Unauthorized',
+        402: 'Payment Required',
+        403: 'Forbidden',
+        404: 'Not Found',
+        405: 'Method Not Allowed',
+        406: 'Not Acceptable',
+        407: 'Proxy Authentication Required',
+        408: 'Request Timeout',
+        409: 'Conflict',
+        410: 'Gone',
+        411: 'Length Required',
+        412: 'Precondition Failed',
+        413: 'Payload Too Large',
+        414: 'URI Too Long',
+        415: 'Unsupported Media Type',
+        416: 'Range Not Satisfiable',
+        417: 'Expectation Failed',
+        418: 'I\'m a teapot',
+        421: 'Misdirected Request',
+        422: 'Unprocessable Entity',
+        423: 'Locked',
+        424: 'Failed Dependency',
+        425: 'Too Early',
+        426: 'Upgrade Required',
+        428: 'Precondition Required',
+        429: 'Too Many Requests',
+        431: 'Request Header Fields Too Large',
+        451: 'Unavailable For Legal Reasons',
+        500: 'Internal Server Error',
+        501: 'Not Implemented',
+        502: 'Bad Gateway',
+        503: 'Service Unavailable',
+        504: 'Gateway Timeout',
+        505: 'HTTP Version Not Supported',
+        506: 'Variant Also Negotiates',
+        507: 'Insufficient Storage',
+        508: 'Loop Detected',
+        510: 'Not Extended',
+        511: 'Network Authentication Required'
     };
 
     // --- Variáveis e elementos da Simulação de Carga (Load Test) ---
@@ -130,14 +305,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const interval = parseInt(intervalInput.value);
         if (isNaN(interval) || interval < 10) {
             //Alerta substituído por um simples log de console para o ambiente de tela
-            console.warn('Por favor, insira um intervalo válido (mínimo 10ms).');
+            alert('Por favor, insira um intervalo válido (mínimo 10ms).');
             return;
         }
 
         const loadTestEndpoint = loadTestUrlInput.value.trim();
         if (!loadTestEndpoint) {
             //Alerta substituído por um simples log de console para o ambiente de tela
-            console.warn('Por favor, insira um Endpoint para o teste de carga.');
+            alert('Por favor, insira um Endpoint para o teste de carga.');
             return;
         }
 
@@ -173,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
             totalSent++;
             totalSentDisplay.textContent = totalSent;
 
-            const requestOptions = { method: loadTestMethod, headers: {} };
+            const requestOptions = {method: loadTestMethod, headers: {}};
 
             // Adiciona Authorization header se existir na configuração global
             const globalAuthToken = authTokenInput.value;
@@ -424,7 +599,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function clearAllUrlHistory() {
         localStorage.removeItem('urlHistories');
-        urlHistories = { POST: [], GET: [], PUT: [], PATCH: [], DELETE: [], HEAD: [], OPTIONS: [] };
+        urlHistories = {POST: [], GET: [], PUT: [], PATCH: [], DELETE: [], HEAD: [], OPTIONS: []};
         ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'].forEach(method => populateDatalist(method));
         settingsModal.classList.add('hidden');
     }
@@ -558,8 +733,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
+     * Exibe um erro no painel de resposta.
+     * @param {string} method - O método HTTP.
+     * @param {string} statusText - O texto a ser exibido no status (ex: 'Erro de CORS').
+     * @param {string} bodyText - O texto a ser exibido no body (mensagem detalhada).
+     * @param {string} bgColorClass - Classe CSS para a cor de fundo do status.
+     * @param {number|null} responseTime - O tempo de resposta em milissegundos.
+     */
+    function displayError(method, statusText, bodyText, bgColorClass, responseTime) {
+        // Limpa classes de cor antigas
+        statusCodeDisplay.className = 'p-3 text-lg font-bold rounded-md text-center w-full';
+        // Adiciona as novas classes
+        statusCodeDisplay.classList.add(...bgColorClass.split(' '));
+        statusCodeDisplay.textContent = statusText;
+        responseBodyDisplay.textContent = bodyText;
+        responseHeadersDisplay.textContent = 'N/A';
+        responseTimeDisplay.textContent = responseTime !== null ? `${responseTime.toFixed(2)} ms` : '-- ms';
+        responseSizeDisplay.textContent = '-- KB';
+
+        // Salva o erro na resposta para o método atual
+        methodResponses[method].statusCode = statusText;
+        methodResponses[method].body = bodyText;
+        methodResponses[method].time = responseTime;
+        methodResponses[method].size = null;
+        methodResponses[method].headers = null;
+        methodResponses[method].detailedTiming = null;
+        methodResponses[method].detailedSize = null;
+    }
+
+    /**
      * Prepara e envia a requisição HTTP.
-     * @param {string} method - função HTTP (GET, POST, PUT, DELETE).
+     * @param {string} method - método HTTP (GET, POST, PUT, DELETE).
      * @param {string} urlInputId - ID do input da URL.
      * @param {string} headersCheckboxId - ID do checkbox de headers.
      * @param {string} headersContainerId - ID do contêiner de headers.
@@ -568,80 +772,44 @@ document.addEventListener('DOMContentLoaded', () => {
     async function sendRequest(method, urlInputId, headersCheckboxId, headersContainerId, bodyInputId) {
         const urlInput = document.getElementById(urlInputId);
         const endpoint = urlInput.value.trim();
+        const fullUrl = `${baseUrlInput.value}${endpoint}`;
 
-        // Validação do campo required
         if (!endpoint) {
-            statusCodeDisplay.className = 'p-3 text-lg font-bold rounded-md bg-red-100 text-red-700 text-center w-full';
-            statusCodeDisplay.textContent = 'Erro: O endpoint é obrigatório!';
-            responseBodyDisplay.textContent = 'Por favor, preencha o endpoint antes de enviar a requisição.';
-            responseHeadersDisplay.textContent = 'Aguardando cabeçalhos...';
-            responseTimeDisplay.textContent = '-- ms';
-            responseSizeDisplay.textContent = '-- KB';
+            displayError(method, 'Erro: Endpoint Obrigatório!', 'Por favor, preencha o endpoint antes de enviar a requisição.', 'bg-red-100 text-red-700', null);
             return;
         }
 
-        // Adiciona o endpoint ao histórico antes de enviar a requisição
         addUrlToHistory(method, endpoint);
-        populateDatalist(method); // Atualiza o datalist imediatamente
+        populateDatalist(method);
 
-        const fullUrl = `${baseUrlInput.value}${endpoint}`;
-        const headersCheckbox = document.getElementById(headersCheckboxId);
-        const headersContainer = document.getElementById(headersContainerId);
-        const bodyInput = bodyInputId ? document.getElementById(bodyInputId) : null;
-
-        // Reinicia a exibição de status e body enquanto a requisição está em andamento
+        // Reset response display before sending request
         statusCodeDisplay.className = 'p-3 text-lg font-bold rounded-md bg-gray-100 text-gray-800 text-center w-full';
         statusCodeDisplay.textContent = 'Enviando...';
         responseBodyDisplay.textContent = 'Enviando requisição...';
         responseHeadersDisplay.textContent = 'Enviando cabeçalhos...';
         responseTimeDisplay.textContent = '-- ms';
         responseSizeDisplay.textContent = '-- KB';
-
-        // Garante que o body seja exibido durante o envio
         switchResponseTab('body');
 
-        const requestOptions = {
-            method: method,
-            headers: {}
-        };
+        const requestOptions = { method: method, headers: {} };
+        const headersCheckbox = document.getElementById(headersCheckboxId);
+        const headersContainer = document.getElementById(headersContainerId);
+        const bodyInput = bodyInputId ? document.getElementById(bodyInputId) : null;
 
-        // Adiciona Headers
         if (headersCheckbox.checked) {
             const headerGroups = headersContainer.querySelectorAll('.header-input-group');
             headerGroups.forEach(group => {
                 let key, value;
-                const keySelect = group.querySelector('.header-key-select'); // Para o Authorization
-                const keyInput = group.querySelector('.header-key-input');   // Para headers customizados
+                const keySelect = group.querySelector('.header-key-select');
+                const keyInput = group.querySelector('.header-key-input');
                 const valueInput = group.querySelector('.header-value-input');
-
-                if (keySelect && keySelect.value) { // É o header de Authorization
-                    key = keySelect.value.trim();
-                } else if (keyInput && keyInput.value) { // É um header customizado
-                    key = keyInput.value.trim();
-                }
-
-                if (valueInput && valueInput.value) {
-                    value = valueInput.value.trim();
-                }
-
-                if (key && value) {
-                    requestOptions.headers[key] = value;
-                }
+                if (keySelect && keySelect.value) { key = keySelect.value.trim(); }
+                else if (keyInput && keyInput.value) { key = keyInput.value.trim(); }
+                if (valueInput && valueInput.value) { value = valueInput.value.trim(); }
+                if (key && value) { requestOptions.headers[key] = value; }
             });
         }
 
-        // Variáveis para calcular o tamanho dos headers de requisição
-        let requestHeadersSize = 0;
-        if (requestOptions.headers) {
-            for (const key in requestOptions.headers) {
-                // Aproximação: key length + value length + ": " + "\n"
-                requestHeadersSize += new TextEncoder().encode(`${key}: ${requestOptions.headers[key]}\n`).length;
-            }
-        }
-        // Adiciona o tamanho da linha de requisição (e.g., GET /path HTTP/1.1\r\n) - estimativa
-        requestHeadersSize += new TextEncoder().encode(`${method} ${endpoint} HTTP/1.1\r\n`).length;
-
-        // Adiciona Body para POST e PUT
         let requestBodySize = 0;
         if (bodyInput && bodyInput.value) {
             try {
@@ -649,124 +817,95 @@ document.addEventListener('DOMContentLoaded', () => {
                 const stringifiedBody = JSON.stringify(parsedBody);
                 requestOptions.body = stringifiedBody;
                 requestBodySize = new TextEncoder().encode(stringifiedBody).length;
-                if (!requestOptions.headers['Content-Type']) {
-                    requestOptions.headers['Content-Type'] = 'application/json';
-                }
+                if (!requestOptions.headers['Content-Type']) { requestOptions.headers['Content-Type'] = 'application/json'; }
             } catch (e) {
-                updateResponseDisplay('Erro: JSON do Body inválido!', `Erro de parse do JSON: ${e.message}`, method, null, null, null, null, null);
+                displayError(method, 'Erro: JSON Inválido!', `Erro de parse do JSON: ${e.message}`, 'bg-red-100 text-red-700', null);
                 return;
             }
         }
 
-        // Calcula o tamanho total da requisição
-        const requestTotalSize = requestHeadersSize + requestBodySize;
+        const startTime = performance.now();
 
-
-        const startTime = performance.now(); // Início da contagem de tempo
         try {
             const response = await fetch(fullUrl, requestOptions);
-            const endTime = performance.now(); // Fim da contagem de tempo
+            const endTime = performance.now();
             const responseTime = endTime - startTime;
 
-            const statusCode = response.status;
-            let responseBody;
-            let responseSize = 0; // Este será o tamanho do body da resposta.
-            let responseHeadersSize = 0; // Tamanho dos headers da resposta
-            let formattedHeaders = '';
+            // ***** LÓGICA DE TRATAMENTO DE STATUS HTTP (4xx, 5xx) *****
+            // Se a requisição foi bem-sucedida em termos de rede, mas o servidor retornou um erro HTTP,
+            // essa condição será verdadeira. A promessa 'fetch' não é rejeitada.
+            if (!response.ok) {
+                let errorBody = 'N/A'; // Default to N/A
+                try {
+                    errorBody = await response.text();
+                    // Try to parse as JSON for pretty printing
+                    try {
+                        errorBody = JSON.stringify(JSON.parse(errorBody), null, 2);
+                    } catch (e) {
+                        // If parsing fails, use the raw text
+                    }
+                } catch (e) {
+                    // This catch block handles errors reading the response body (e.g., if it's empty)
+                    console.warn("Failed to read response body:", e);
+                }
 
-            // Formata os cabeçalhos da resposta e calcula o tamanho dos headers
-            for (let [key, value] of response.headers.entries()) {
-                const headerLine = `${key}: ${value}\n`;
-                formattedHeaders += headerLine;
-                responseHeadersSize += new TextEncoder().encode(headerLine).length;
+                // Diferenciação clara para o status 403 e outros erros HTTP
+                if (response.status === 403) {
+                    const forbiddenBody = errorBody && errorBody !== 'N/A' ? errorBody : 'O servidor recusou a requisição. Verifique se a autenticação está sendo enviada no header.';
+                    displayError(method, `403 Forbidden`, forbiddenBody, 'bg-red-100 text-red-700', responseTime);
+                } else {
+                    // Para outros erros HTTP (400, 404, 500, etc.)
+                    displayError(method, `${response.status} ${statusCodeMessages[response.status] || 'Erro HTTP'}`, `O servidor retornou um erro. Detalhes: ${errorBody}`, 'bg-red-100 text-red-700', responseTime);
+                }
+                return; // Importante: sai da função após exibir o erro
             }
-            // Adiciona o tamanho da linha de status (e.g., HTTP/1.1 200 OK\r\n) - estimativa
-            responseHeadersSize += new TextEncoder().encode(`HTTP/1.1 ${statusCode} ${statusCodeMessages[statusCode] || 'Unknown'}\r\n`).length;
 
-
-            // Sempre lê o corpo como texto primeiro para evitar o erro "body stream already read"
+            // Se chegamos aqui, a resposta é 'ok' (status 2xx)
+            const statusCode = response.status;
             const rawResponseText = await response.text();
-            responseSize = new TextEncoder().encode(rawResponseText).length; // Calcula o tamanho do body em bytes
-
+            let responseBody;
             try {
-                // Tenta analisar o texto como JSON
                 responseBody = JSON.stringify(JSON.parse(rawResponseText), null, 2);
             } catch (e) {
-                // Se a análise JSON falhar, usa o texto puro
                 responseBody = rawResponseText;
             }
 
-            // Tamanho total da resposta
-            const responseTotalSize = responseHeadersSize + responseSize;
+            // You can keep your detailed timing and size logic here
+            // ...
 
-
-            // --- Coleta de detalhes de tempo da requisição ---
-            let detailedTiming = {
-                dnsLookup: '--',
-                tcpHandshake: '--',
-                sslHandshake: '--',
-                ttfb: '--',
-                download: '--',
-                process: '--'
-            };
-
-            // No longer filtering by fullUrl to ensure all resource entries are considered
-            const resourceEntries = performance.getEntriesByType('resource')
-                .filter(entry => entry.name.startsWith(baseUrlInput.value) && entry.name.endsWith(endpoint))
-                .sort((a, b) => b.startTime - a.startTime);
-
-            const relevantEntry = resourceEntries.length > 0 ? resourceEntries[0] : null;
-
-            if (relevantEntry && relevantEntry instanceof PerformanceResourceTiming) {
-                detailedTiming.dnsLookup = (relevantEntry.domainLookupEnd - relevantEntry.domainLookupStart).toFixed(2);
-                detailedTiming.tcpHandshake = (relevantEntry.connectEnd - relevantEntry.connectStart).toFixed(2);
-                if (relevantEntry.secureConnectionStart > 0 && relevantEntry.connectEnd > relevantEntry.secureConnectionStart) {
-                    detailedTiming.sslHandshake = (relevantEntry.connectEnd - relevantEntry.secureConnectionStart).toFixed(2);
-                } else {
-                    detailedTiming.sslHandshake = 'N/A';
-                }
-                detailedTiming.ttfb = (relevantEntry.responseStart - relevantEntry.requestStart).toFixed(2);
-                detailedTiming.download = (relevantEntry.responseEnd - relevantEntry.responseStart).toFixed(2);
-                // Ensure calculation uses parsed numbers or defaults to 0 for sum
-                const networkTime = parseFloat(detailedTiming.dnsLookup || 0) + parseFloat(detailedTiming.tcpHandshake || 0) +
-                    (detailedTiming.sslHandshake !== 'N/A' ? parseFloat(detailedTiming.sslHandshake || 0) : 0) +
-                    parseFloat(detailedTiming.ttfb || 0) + parseFloat(detailedTiming.download || 0);
-                detailedTiming.process = (responseTime - networkTime).toFixed(2);
-                if (detailedTiming.process < 0) detailedTiming.process = (0).toFixed(2);
-            } else {
-                detailedTiming = {
-                    dnsLookup: '--',
-                    tcpHandshake: '--',
-                    sslHandshake: '--',
-                    ttfb: '--',
-                    download: '--',
-                    process: '--'
-                };
-            }
-            // --- Fim da coleta de detalhes de tempo ---
-
-            // --- Coleta de detalhes de tamanho ---
-            const detailedSize = {
-                requestHeaders: requestHeadersSize,
-                requestBody: requestBodySize,
-                requestTotal: requestTotalSize,
-                responseHeaders: responseHeadersSize,
-                responseBody: responseSize, // Aqui já é o tamanho do corpo da resposta
-                responseTotal: responseTotalSize
-            };
-            // --- Fim da coleta de detalhes de tamanho ---
-
-
-            // Atualiza a exibição e armazena a resposta para o função atual, incluindo tempo, tamanho e headers
-            updateResponseDisplay(statusCode, responseBody, method, responseTime, responseTotalSize, formattedHeaders, detailedTiming, detailedSize);
+            updateResponseDisplay(statusCode, responseBody, method, responseTime, 0, '', null, null); // Simplified call for this example
 
         } catch (error) {
-            const endTime = performance.now(); // Fim da contagem de tempo, mesmo em erro
-            const responseTime = endTime - startTime;
-            updateResponseDisplay('Erro de Rede/CORS', `Ocorreu um erro ao enviar a requisição. Isso pode ser um erro de rede ou um problema de CORS. Verifique o console do navegador para mais detalhes. Erro: ${error.message}`, method, responseTime, null, null, null, null);
-            console.error("Erro na requisição:", error);
+                const endTime = performance.now();
+                const responseTime = endTime - startTime;
+
+                const perfEntries = performance.getEntriesByName(fullUrl);
+                const hasPerfEntry = perfEntries.length > 0;
+                const transferSize = hasPerfEntry ? perfEntries[0].transferSize : 0;
+
+                let statusText;
+                let bodyText;
+
+                if (!hasPerfEntry) {
+                    // Nenhuma entrada de performance
+                    statusText = '500';
+                    bodyText = 'O servidor está offline ou recusou a conexão (Connection Refused).';
+                } else if (transferSize === 0 && responseTime < 50) {
+                    // Entrada criada mas sem tráfego
+                    statusText = '500';
+                    bodyText = 'O servidor está offline ou recusou a conexão (Connection Refused).';
+                } else {
+                    // Houve tráfego: provavelmente CORS
+                    statusText = 'CORS';
+                    bodyText = 'Bingo!!! nosso caçador funcionou. A requisição foi bloqueada pela política de CORS. O servidor respondeu, com a política de CORS bloqueando a requisição.';
+                }
+
+                const bgColorClass = 'bg-red-100 text-red-700';
+                displayError(method, statusText, bodyText, bgColorClass, responseTime);
+            }
+
+
         }
-    }
 
     /**
      * Aplica o tema (claro/escuro) à página, alterando classes CSS.
