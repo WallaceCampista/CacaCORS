@@ -528,7 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 statusCodeDisplay.classList.add('bg-status-default', 'text-status-default');
             }
         } else {
-            statusCodeDisplay.textContent = 'Aguardando...';
+            statusCodeDisplay.textContent = 'Envie a requisição para ver o status';
             statusCodeDisplay.classList.add('bg-gray-100', 'text-gray-800');
         }
 
@@ -548,10 +548,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Atualiza Body da Resposta
-        responseBodyDisplay.textContent = responseBody !== null ? responseBody : 'Aguardando resposta...';
+        responseBodyDisplay.textContent = responseBody !== null ? responseBody : 'Aqui será exibido o corpo da resposta...';
 
         // Atualiza Headers da Resposta
-        responseHeadersDisplay.textContent = responseHeaders !== null ? responseHeaders : 'Aguardando cabeçalhos...';
+        responseHeadersDisplay.textContent = responseHeaders !== null ? responseHeaders : 'Aqui serão exibidos os cabeçalhos da resposta...';
     }
 
     /**
