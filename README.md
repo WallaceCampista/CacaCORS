@@ -1,2 +1,0 @@
-# CacaCORS
-Simulador de Reuisições
