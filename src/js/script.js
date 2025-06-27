@@ -889,15 +889,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!hasPerfEntry) {
                     // Nenhuma entrada de performance
                     statusText = '500 Internal Server Error';
-                    bodyText = 'O servidor está offline ou recusou a conexão (Connection Refused).';
+                    bodyText = 'O servidor está offline (Connection Refused).';
                 } else if (transferSize === 0 && responseTime < 50) {
                     // Entrada criada mas sem tráfego
                     statusText = '500 Internal Server Error';
-                    bodyText = 'O servidor está offline ou recusou a conexão (Connection Refused).';
+                    bodyText = 'O servidor está offline (Connection Refused).';
                 } else {
                     // Houve tráfego: provavelmente CORS
                     statusText = 'CORS';
-                    bodyText = 'Bingo!!! nosso caçador funcionou. A requisição foi bloqueada pela política de CORS. O servidor respondeu, com a política de CORS bloqueando a requisição.';
+                    bodyText = 'Bingo!!! Nosso caçador funcionou. A requisição foi bloqueada pela política de CORS.';
                 }
 
                 const bgColorClass = 'bg-red-100 text-red-700';
